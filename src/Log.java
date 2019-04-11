@@ -10,7 +10,7 @@ public class Log {
 		String inputCisla = "";
 		int poradieOsoby = 0;
 		Scanner scanner = new Scanner(System.in);
-		PrihlasenieFO prihlasenieFO = new PrihlasenieFO();
+		PrihlasenieZiadatela prihlasenieFO = new PrihlasenieZiadatela();
 		PrihlaseniePO prihlaseniePO = new PrihlaseniePO();
 		PrihlasenieSpracovatela prihlasenieSP = new PrihlasenieSpracovatela();
 		PrihlasenieSchvalovatela prihlasenieSC = new PrihlasenieSchvalovatela();

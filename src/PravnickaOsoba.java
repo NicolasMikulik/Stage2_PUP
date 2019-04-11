@@ -3,7 +3,14 @@ import java.util.ArrayList;
 
 public class PravnickaOsoba extends VlastnostiOsoby implements Osoba{
 		private ArrayList<Ziadost> Ziadosti = new ArrayList<Ziadost>();
+		private String Heslo;
 		
+		public void setHeslo(String Heslo) {
+			this.Heslo = Heslo;
+		}
+		public String getHeslo() {
+			return Heslo;
+		}
 		public Notifikacia getNotifikaciaOsoby() {
 			return NotifikaciaOsoby;
 		}
@@ -42,11 +49,32 @@ public class PravnickaOsoba extends VlastnostiOsoby implements Osoba{
 			Ziadosti = ziadosti;
 		}
 		
-		public PravnickaOsoba(String MenoOsoby, String IdentifikacneCislo, int PoradoveCislo) {
+		public PravnickaOsoba(String MenoOsoby, String Heslo, int PoradoveCislo) {
 			this.MenoOsoby = MenoOsoby;
-			this.IdentifikacneCislo = IdentifikacneCislo;
+			this.Heslo = Heslo;
 			this.PoradoveCislo = PoradoveCislo;
 			this.setIdentifikacia("PO");
+		}
+		
+		public int vytvorZiadost(String name, String address, String securityNumber, String reason) {
+			ZiadostOPreukaz novaZiadost = new ZiadostOPreukaz(name, address, securityNumber, reason);
+			this.getZiadosti().add(novaZiadost);
+			novaZiadost.setZiadatel(this);
+			return this.getZiadosti().indexOf(novaZiadost);
+		}
+		
+		public int vytvorZiadost(String name, String address, String securityNumber, int amount) {
+			ZiadostOPrispevok novaZiadost = new ZiadostOPrispevok(name, address, securityNumber, amount);
+			this.getZiadosti().add(novaZiadost);
+			novaZiadost.setZiadatel(this);
+			return this.getZiadosti().indexOf(novaZiadost);
+		}
+		
+		public int vytvorZiadost(String name, String address, String securityNumber, int hours, String typeOfAssistance) {
+			RocnyVykazCinnosti novaZiadost = new RocnyVykazCinnosti(name, address, securityNumber, hours, typeOfAssistance);
+			this.getZiadosti().add(novaZiadost);
+			novaZiadost.setZiadatel(this);
+			return this.getZiadosti().indexOf(novaZiadost);
 		}
 		
 		public int vytvorZiadost(Scanner scanner) {
@@ -94,6 +122,31 @@ public class PravnickaOsoba extends VlastnostiOsoby implements Osoba{
 			System.out.println("Ziadatel doplnil udaje v ziadosti a poslal ziadost naspat spracovatelovi.");
 		}
 		
+		public void stiahnutieZiadosti(Ziadost ziadost, ArrayList<Ziadost> ziadosti) {
+			if(false == ziadost.isAktivna()) {
+				System.out.println("Dana ziadost uz nie je aktivna, takze nemoze byt stiahnuta.");
+				return;
+			}
+			if(null != ziadost && true == ziadost.isAktivna()) {
+				if(null != ziadost.getSchvalovatel()) {
+					((Schvalovatel) ziadost.getSchvalovatel()).getZiadostiNaSpracovanie().remove(ziadost);
+				}
+				ziadost.setSchvalovatel(null);
+				if(null != ziadost.getSpracovatel()) {
+					if (ziadost.getSpracovatel() instanceof SpracovatelPreukazu ) 
+					((SpracovatelPreukazu) ziadost.getSpracovatel()).getZiadostiNaSpracovanie().remove(ziadost);
+					if (ziadost.getSpracovatel() instanceof SpracovatelPrispevku) 
+					((SpracovatelPrispevku) ziadost.getSpracovatel()).getZiadostiNaSpracovanie().remove(ziadost);
+					if (ziadost.getSpracovatel() instanceof SpracovatelPrispevku)
+					  ((SpracovatelVykazu) ziadost.getSpracovatel()).getZiadostiNaSpracovanie().remove(ziadost);
+				}
+				ziadost.setSpracovatel(null);
+				ziadosti.remove(ziadost);
+				ziadost.setAktivna(false);
+				ziadost.setStav("Ziadost bola stiahnuta ziadatelom.");
+			}
+		}
+		
 		public void stiahnutieZiadosti(ArrayList<Ziadost> ziadosti, Scanner scanner) {
 			int poradieZiadosti = 0;
 			Ziadost StahovanaZiadost = null;
@@ -120,7 +173,6 @@ public class PravnickaOsoba extends VlastnostiOsoby implements Osoba{
 				StahovanaZiadost.setSpracovatel(null);
 				ziadosti.remove(StahovanaZiadost);
 				StahovanaZiadost.setAktivna(false);
-				StahovanaZiadost.setInformovaneOsoby(null);
 				StahovanaZiadost.setStav("Ziadost bola stiahnuta ziadatelom.");
 			}
 		}

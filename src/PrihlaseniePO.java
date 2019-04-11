@@ -2,7 +2,7 @@ import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class PrihlaseniePO extends PrihlasenieFO {
+public class PrihlaseniePO extends PrihlasenieZiadatela {
 
 	public void prihlasenieOsoby(PravnickaOsoba osoba, ArrayList<Osoba> list, Scanner scanner, ArrayList<Ziadost> ziadosti) {
 		String inputMena = osoba.getMenoOsoby();

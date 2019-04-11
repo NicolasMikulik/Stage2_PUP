@@ -21,19 +21,19 @@ public class Main extends Application{
 	
 	public void start(Stage primaryStage) throws Exception{
 		logWindow = primaryStage;
-		logWindow.setTitle("Prihlasenie do e-UPSVaR");
+		logWindow.setTitle("Prihlásenie do e-UPSVaR");
 		
 		ComboBox<String> comboBox = new ComboBox<>();
 		comboBox.setPromptText("Kto sa prihlasuje?");
-		comboBox.getItems().addAll("Fyzicka osoba", "Pravnicka osoba", "Spracovatel preukazu", "Spracovatel prispevku",
-				"Spracovatel vykazu", "Schvalovatel");
+		comboBox.getItems().addAll("Fyzická osoba", "Právnická osoba", "Spracovate¾ preukazu", "Spracovate¾ príspevku",
+				"Spracovate¾ výkazu", "Schva¾ovate¾");
 		
 		TextField nameInput = new TextField();
 		nameInput.setPromptText("Meno a priezvisko");
 		TextField passInput = new TextField();
 		passInput.setPromptText("Heslo");
 		
-		button = new Button("Prihlasit");
+		button = new Button("Prihlási");
 		button.setOnAction(e -> prihlasenie(comboBox, nameInput, passInput));
 		
 		VBox vBox = new VBox(10);
@@ -53,16 +53,16 @@ public class Main extends Application{
 		System.out.println(choice);
 		boolean found = false;
 		switch(choice) {
-		case "Fyzicka osoba": for(Osoba osoba : osoby) {
-									if(osoba.getMenoOsoby().equals(name)) {
+		case "Fyzická osoba": for(Osoba osoba : osoby) {
+									if(osoba.getMenoOsoby().equals(name) && osoba instanceof FyzickaOsoba) {
 										if(((FyzickaOsoba) osoba).getHeslo().equals(password)) {
 											found = true;
-											new PrihlasenieFO((FyzickaOsoba) osoba, ziadosti);
+											new PrihlasenieZiadatela((FyzickaOsoba) osoba, ziadosti);
 											break;
 										}
 										else {
 											found = true;
-											System.out.println("Nespravne meno FO alebo heslo.");
+											System.out.println("Nesprávne meno FO alebo heslo.");
 											break;
 										}
 									}
@@ -70,8 +70,28 @@ public class Main extends Application{
 								if(false == found) {
 									poradie = osoby.size();
 									osoby.add(new FyzickaOsoba(nameInput.getText(), passInput.getText(), poradie));
-									new PrihlasenieFO((FyzickaOsoba) osoby.get(poradie), ziadosti);
+									new PrihlasenieZiadatela((FyzickaOsoba) osoby.get(poradie), ziadosti);
 								}
+								break;
+		case "Právnická osoba": for(Osoba osoba : osoby) {
+									if(osoba.getMenoOsoby().equals(name) && osoba instanceof PravnickaOsoba) {
+											if(((PravnickaOsoba) osoba).getHeslo().equals(password)) {
+												found = true;
+												new PrihlasenieZiadatela((PravnickaOsoba) osoba, ziadosti);
+												break;
+											}
+											else {
+												found = true;
+												System.out.println("Nesprávne meno PO alebo heslo.");
+												break;
+											}
+										}
+									}
+									if(false == found) {
+										poradie = osoby.size();
+										osoby.add(new PravnickaOsoba(nameInput.getText(), passInput.getText(), poradie));
+										new PrihlasenieZiadatela((PravnickaOsoba) osoby.get(poradie), ziadosti);
+									}
 								break;
 		default: break;
 		}
