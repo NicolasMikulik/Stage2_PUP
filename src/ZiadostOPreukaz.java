@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 public class ZiadostOPreukaz implements Ziadost {
 		private String MenoZiadatela = "";
@@ -33,6 +35,33 @@ public class ZiadostOPreukaz implements Ziadost {
 			
 			System.out.println(getPoradoveCislo()+" "+getDovod()+" "+getStav()+" "+getMenoZiadatela()+" "+MenoSpracovatela+" "
 			+MenoSchvalovatela+" "+getDoplnujuceInformacie()+" "+getDruh());
+		}
+		
+		public void kontrolaZiadosti(Ziadost ziadost, Spracovatel spracovatel, Stage logWindow, Scene tableScene, ArrayList<Osoba> osoby) {
+		boolean process = false;
+			if (null == ziadost.getSpracovatel()) {
+				boolean assign = ConfirmBox.display("Potvrdenie prijatia", "Zvolen˙ ûiadosù o preukaz nikto"
+						+ " nespracov·va. Chcete prijaù t˙to ûiadosù?\néiadateæ bude informovan˝ o prijatÌ.");
+				if (assign) {
+					 spracovatel.prijmiZiadost((ZiadostOPreukaz) ziadost);
+					 process = ConfirmBox.display("Spracovanie", "éiadosù o preukaz je V·m pridelen·, ûel·te si prejsù k jej spracovaniu?");
+						if(process) {
+							((SpracovatelPreukazu) spracovatel).spracovanieZiadosti((SpracovatelPreukazu) spracovatel, (ZiadostOPreukaz) ziadost, logWindow, tableScene, osoby);
+						}
+				}
+				else {AlertBox.display("Zamietnutie prijatia", "éiadosù o preukaz V·m nebude pridelen·.");}
+				}
+			else {
+				if (false == ziadost.getSpracovatel().getMenoOsoby().equals(spracovatel.getMenoOsoby())) {
+					AlertBox.display("Neplatn· voæba", "éiadosù o preukaz spracov·va in˝ spracovateæ,"
+							+ " teda ju nemÙûete prijaù.");}
+				else {
+					process = ConfirmBox.display("Neplatn· voæba", "éiadosù o preukaz je V·m uû pridelen·, ûel·te si prejsù k jej spracovaniu?");
+					if(process) {
+						((SpracovatelPreukazu) spracovatel).spracovanieZiadosti((SpracovatelPreukazu) spracovatel, (ZiadostOPreukaz) ziadost, logWindow, tableScene, osoby);
+					}
+				}
+			}
 		}
 		
 		public void pridajInformovanuOsobu(Osoba osoba) {

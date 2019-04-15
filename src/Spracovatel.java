@@ -1,6 +1,9 @@
 
 public class Spracovatel extends VlastnostiOsoby implements Osoba{
 	
+	public void prijmiZiadost(Ziadost ziadost) {
+		ziadost.setSpracovatel(this);
+	}
 	public Notifikacia getNotifikaciaOsoby() {
 		return NotifikaciaOsoby;
 	}

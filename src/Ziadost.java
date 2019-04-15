@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import javafx.stage.Stage;
+import javafx.scene.Scene;
 
 public interface Ziadost {
 	
@@ -25,4 +27,5 @@ public interface Ziadost {
 	public void setAdresa(String adresa);
 	public String getIdentifikacneCisloZiadatela();
 	public void setIdentifikacneCisloZiadatela(String identifikacneCisloZiadatela);
+	public void kontrolaZiadosti(Ziadost ziadost, Spracovatel spracovatel, Stage mainStage, Scene tableScene, ArrayList<Osoba> osoby);
 }

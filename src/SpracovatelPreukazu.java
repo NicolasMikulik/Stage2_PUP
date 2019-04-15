@@ -1,36 +1,184 @@
 import java.util.ArrayList;
 import java.util.Scanner;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import java.util.ArrayList;
+import java.io.*;
 
 public class SpracovatelPreukazu extends Spracovatel {
-		private ArrayList <ZiadostOPreukaz> ZiadostiNaSpracovanie = new ArrayList<ZiadostOPreukaz>();
+		private ArrayList <Ziadost> ZiadostiNaSpracovanie = new ArrayList<Ziadost>();
 		
-		public SpracovatelPreukazu(String Meno, String IdentifikacneCislo, int PoradoveCislo) {
+		private String Heslo;
+		
+		public void setHeslo(String Heslo) {
+			this.Heslo = Heslo;
+		}
+		public String getHeslo() {
+			return Heslo;
+		}
+		public SpracovatelPreukazu(String Meno, String Heslo, int PoradoveCislo) {
 			this.setMenoOsoby(Meno);
-			this.setIdentifikacneCislo(IdentifikacneCislo);
+			this.setHeslo(Heslo);
 			this.PoradoveCislo = PoradoveCislo;
 			this.setIdentifikacia("SP");
 		}
 		
-		public void prijmiZiadost(ZiadostOPreukaz ziadost) {
-			this.ZiadostiNaSpracovanie.add(ziadost);
+		public void prijmiZiadost(Ziadost ziadost) {
 			ziadost.setSpracovatel(this);
-			ziadost.pridajInformovanuOsobu(this);
-			ziadost.setStav("Ziadost bola prijata spracovatelom.");
+			this.ZiadostiNaSpracovanie.add(ziadost);
+			ziadost.setStav("éiadosù bola prijat· spracovateæom preukazu");
 		}
 		
-		public void vratZiadost(ZiadostOPreukaz HladanaZiadost, Scanner scanner) {
-			String doplnenie = "";
-			System.out.println("Napiste, ktore udaje ma ziadatel doplnit: ");
-			scanner.nextLine();
-			doplnenie = scanner.nextLine();
-			System.out.println("Ziadost bola spracovatelom odoslana naspat uzivatelovi na doplnenie udaju:" + doplnenie);
-			HladanaZiadost.setStav("Ziadost bola spracovatelom odoslana uzivatelovi na doplnenie udaju: " + doplnenie);
+		public void vratZiadost(ZiadostOPreukaz HladanaZiadost) {
+			Stage inputStage = new Stage();
+			inputStage.initModality(Modality.WINDOW_MODAL);
+			
+			Label label = new Label("NapÌöte, akÈ ˙daje m· ûiadateæ doplniù");
+			label.setPadding(new Insets(5,0,5,0));
+			
+			TextField input = new TextField();
+			input.setMaxWidth(150);
+			
+			Button returnToSender = new Button("Odoslaù");
+			returnToSender.setPadding(new Insets(5,5,5,5));
+			
+			VBox vBox = new VBox(15);
+			vBox.getChildren().addAll(label, input, returnToSender);
+			vBox.setAlignment(Pos.TOP_CENTER);
+			
+			Scene inputScene = new Scene(vBox, 200, 200);
+			inputStage.setScene(inputScene);
+			inputStage.showAndWait();
+			
+			returnToSender.setOnAction(e -> {
+				try {
+					if(input.getText().equals("")) throw new IOException();
+					HladanaZiadost.setStav("éiadosù o preukaz bola spracovateæom odoslan· uûÌvateæovi na doplnenie ˙daju: "
+							+ input.getText());
+					inputStage.close();
+				}
+				catch (IOException error){
+					Alert v = new Alert(AlertType.ERROR);
+					v.setTitle("Chyba vstupu");
+					v.setContentText("IO Prazdny");
+					v.showAndWait();
+				}
+			});
+		}
+ 
+		
+		public void spracovanieZiadosti(SpracovatelPreukazu spracovatelPreukazu, ZiadostOPreukaz HladanaZiadost, Stage logWindow, Scene tableScene, ArrayList<Osoba> osoby) {
+			logWindow.setTitle("Spracovanie ûiadosti o preukaz");
+
+			Button returnToSender = new Button("Odoslaù ûiadosù sp‰ù ûiadateæovi za˙Ëelom doplnenia inform·ciÌ");
+			returnToSender.setPadding(new Insets(5,5,5,5));
+			Button pitchRequest = new Button("Posun˙ù ûiadosù schvaæovateæovi");
+			pitchRequest.setPadding(new Insets(5,5,5,5));
+			Button returnButton = new Button("Nasp‰ù");
+			returnButton.setPadding(new Insets(5,5,5,5));
+			
+			VBox vBox = new VBox(10);
+			vBox.setPadding(new Insets(20,20,20,20));
+			vBox.setAlignment(Pos.CENTER);
+			vBox.getChildren().addAll(returnToSender, pitchRequest, returnButton);
+			
+			Scene sendScene = new Scene(vBox, 400, 400);
+			logWindow.setScene(sendScene);
+			
+			returnToSender.setOnAction(e -> spracovatelPreukazu.vratZiadost(HladanaZiadost));
+			pitchRequest.setOnAction(e -> choiceOfApprover(sendScene, spracovatelPreukazu, HladanaZiadost, logWindow, osoby));
+			returnButton.setOnAction(e -> logWindow.setScene(tableScene));
+			
+			int cinnost = 3;
+			int poradoveCislo = 0;
+			Schvalovatel HladanySchvalovatel = null;
+			System.out.print("Zadajte:\n1) pre odoslanie ziadosti ziadatelovi za ucelom doplnenia udajov"
+					+ "2) pre poslanie ziadosti schvalovatelovi 3) pre zrusenie cinnosti");
+			switch (cinnost) {
+			case 1 : spracovatelPreukazu.vratZiadost(HladanaZiadost);
+					break;
+			case 2 :for(Osoba osoba: osoby) 
+						if(osoba instanceof Schvalovatel && osoba.getIdentifikacia().equals("SC")) 
+							System.out.println(osoba.getPoradoveCislo()+" "+osoba.getMenoOsoby()+" "+osoba.getIdentifikacia()+" Heureka!");
+				 	System.out.println("Zvolte cislo schvalovatela, ktoremu chcete poslat ziadost na schvalenie:");
+					HladanySchvalovatel = (Schvalovatel) osoby.get(poradoveCislo);
+					HladanySchvalovatel.prijmiZiadost(HladanaZiadost);
+					HladanaZiadost.vypisUdajeZiadosti();
+					break;
+			case 3 : System.out.println("Zvolili ste zrusenie cinnosti.");
+					break;
+			default: System.out.println("Neznama cinnost."); 
+					break;
+			}
 		}
 		
-		public ArrayList<ZiadostOPreukaz> getZiadostiNaSpracovanie() {
+		public void choiceOfApprover(Scene sendScene, SpracovatelPreukazu spracovatel, ZiadostOPreukaz ziadost, Stage logWindow, ArrayList<Osoba> osoby) {
+			
+			Button returnButton = new Button("Nasp‰ù");
+			returnButton.setPadding(new Insets(10,10,10,10));
+			Button processButton = new Button("Odoslaù");
+			processButton.setPadding(new Insets(10,10,10,10));
+			
+			Label label = new Label("Kliknite na schvaæovateæa, ktorÈmu chcete ûiadosù o preukaz odoslaù a stlaËte "
+					+ "tlaËidlo ¥Odoslaù¥");
+			label.setPadding(new Insets(10,0,10,0));
+			
+			TableView<Osoba> table = new TableView<>();
+			
+			HBox hBox = new HBox(10);
+			hBox.setAlignment(Pos.CENTER);
+			hBox.getChildren().addAll(processButton, returnButton);
+			
+			VBox vBox = new VBox(10);
+			vBox.setAlignment(Pos.CENTER);
+			vBox.getChildren().addAll(table, label, hBox);
+			
+			TableColumn<Osoba, String> nameColumn = new TableColumn<>("Meno schvaæovateæa");
+			nameColumn.setMinWidth(50);
+			nameColumn.setCellValueFactory(new PropertyValueFactory<Osoba, String>("MenoOsoby"));
+			
+			TableColumn<Osoba, String> IDColumn = new TableColumn<>("Identifik·cia");
+			IDColumn.setMinWidth(300);
+			IDColumn.setCellValueFactory(new PropertyValueFactory<Osoba, String>("Identifikacia"));
+			
+			table.setItems(getApprovers(osoby)); //pretypovanie pomocou vlastnej metody, samotne pretypovanie na Observable List zobrazovalo varovanie
+			table.getColumns().add(nameColumn);
+			table.getColumns().add(IDColumn);
+			table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+			table.setPlaceholder(new Label("Nie s˙ prihl·senÌ ûiadni schvaæovatelia."));
+			
+			Scene tableScene = new Scene(vBox, 400, 400);
+			logWindow.setScene(tableScene);
+			
+			returnButton.setOnAction(e -> logWindow.setScene(sendScene));
+			processButton.setOnAction(e -> {
+				((Schvalovatel) table.getSelectionModel().getSelectedItem()).prijmiZiadost(ziadost);
+				logWindow.setScene(sendScene);	
+			});
+			}
+		
+		public ObservableList<Osoba> getApprovers(ArrayList<Osoba> osoby) {
+			ObservableList<Osoba> approvers = FXCollections.observableArrayList();
+			for(Osoba osoba: osoby) {
+				if(osoba instanceof Schvalovatel && osoba.getIdentifikacia().equals("SC")) 
+					approvers.add(osoba);
+			}
+			return approvers;
+		}
+		
+		public ArrayList<Ziadost> getZiadostiNaSpracovanie() {
 			return ZiadostiNaSpracovanie;
 		}
-		public void setZiadostiNaSpracovanie(ArrayList<ZiadostOPreukaz> ziadostiNaSpracovanie) {
+		public void setZiadostiNaSpracovanie(ArrayList<Ziadost> ziadostiNaSpracovanie) {
 			ZiadostiNaSpracovanie = ziadostiNaSpracovanie;
 		}
 }

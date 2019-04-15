@@ -21,7 +21,6 @@ public class Schvalovatel extends Spracovatel{
 	public void prijmiZiadost(Ziadost ziadost) {
 		this.ZiadostiNaSpracovanie.add(ziadost);
 		ziadost.setSchvalovatel(this);
-		ziadost.pridajInformovanuOsobu(this);
 		ziadost.setStav("Ziadost bola prijata SCHVALOVATELOM.");
 		System.out.print("Ziadost bola prijata SCHVALOVATELOM."+ziadost.getSchvalovatel().getMenoOsoby());
 	}
@@ -33,7 +32,6 @@ public class Schvalovatel extends Spracovatel{
 		System.out.print("Ziadost bola SCHVALOVATELOM odoslana naspat spracovatelovi.");
 		HladanaZiadost.setStav("Ziadost bola SCHVALOVATELOM odoslana spracovatelovi na doplnenie udaju: "+doplnenie);
 		HladanaZiadost.setSchvalovatel(null);
-		HladanaZiadost.odoberInformovanuOsobu(this);
 		this.ZiadostiNaSpracovanie.remove(HladanaZiadost);
 	}
 	

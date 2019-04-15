@@ -34,7 +34,7 @@ public class Main extends Application{
 		passInput.setPromptText("Heslo");
 		
 		button = new Button("Prihlási");
-		button.setOnAction(e -> prihlasenie(comboBox, nameInput, passInput));
+		button.setOnAction(e -> prihlasenie(comboBox, nameInput, passInput, logWindow));
 		
 		VBox vBox = new VBox(10);
 		vBox.setPadding(new Insets(10, 10, 10, 10));
@@ -46,7 +46,7 @@ public class Main extends Application{
 		logWindow.show();
 	}
 	
-	public void prihlasenie(ComboBox<String> comboBox, TextField nameInput, TextField passInput) {
+	public void prihlasenie(ComboBox<String> comboBox, TextField nameInput, TextField passInput, Stage logWindow) {
 		String choice = comboBox.getValue();
 		String name = nameInput.getText();
 		String password = passInput.getText();
@@ -93,6 +93,26 @@ public class Main extends Application{
 										new PrihlasenieZiadatela((PravnickaOsoba) osoby.get(poradie), ziadosti);
 									}
 								break;
+		case "Spracovate¾ preukazu": for(Osoba osoba : osoby) {
+										if(osoba.getMenoOsoby().equals(name) && osoba instanceof SpracovatelPreukazu) {
+												if(((SpracovatelPreukazu) osoba).getHeslo().equals(password)) {
+													found = true;
+													new PrihlasenieSpracovatela((SpracovatelPreukazu) osoba, ziadosti, logWindow, osoby);
+													break;
+												}
+												else {
+													found = true;
+													System.out.println("Nesprávne meno alebo heslo spracovate¾a.");
+													break;
+												}
+											}
+										}
+										if(false == found) {
+											poradie = osoby.size();
+											osoby.add(new SpracovatelPreukazu(nameInput.getText(), passInput.getText(), poradie));
+											new PrihlasenieSpracovatela((SpracovatelPreukazu) osoby.get(poradie), ziadosti, logWindow, osoby);
+										}
+									break;
 		default: break;
 		}
 	}
