@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Scanner;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
@@ -11,7 +10,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import java.util.ArrayList;
 import java.io.*;
 
 public class SpracovatelPreukazu extends Spracovatel {
@@ -40,7 +38,7 @@ public class SpracovatelPreukazu extends Spracovatel {
 		
 		public void vratZiadost(ZiadostOPreukaz HladanaZiadost) {
 			Stage inputStage = new Stage();
-			inputStage.initModality(Modality.WINDOW_MODAL);
+			inputStage.setTitle("Zadanie ˙daju na doplnenie");
 			
 			Label label = new Label("NapÌöte, akÈ ˙daje m· ûiadateæ doplniù");
 			label.setPadding(new Insets(5,0,5,0));
@@ -60,24 +58,16 @@ public class SpracovatelPreukazu extends Spracovatel {
 			inputStage.showAndWait();
 			
 			returnToSender.setOnAction(e -> {
-				try {
-					if(input.getText().equals("")) throw new IOException();
+					System.out.println("Vr·tenie ûiadosti "+input.getText());
 					HladanaZiadost.setStav("éiadosù o preukaz bola spracovateæom odoslan· uûÌvateæovi na doplnenie ˙daju: "
 							+ input.getText());
 					inputStage.close();
-				}
-				catch (IOException error){
-					Alert v = new Alert(AlertType.ERROR);
-					v.setTitle("Chyba vstupu");
-					v.setContentText("IO Prazdny");
-					v.showAndWait();
-				}
 			});
 		}
  
 		
-		public void spracovanieZiadosti(SpracovatelPreukazu spracovatelPreukazu, ZiadostOPreukaz HladanaZiadost, Stage logWindow, Scene tableScene, ArrayList<Osoba> osoby) {
-			logWindow.setTitle("Spracovanie ûiadosti o preukaz");
+		public void spracovanieZiadosti(SpracovatelPreukazu spracovatelPreukazu, ZiadostOPreukaz HladanaZiadost, Stage processStage, Scene tableScene, ArrayList<Osoba> osoby) {
+			processStage.setTitle("Spracovanie ûiadosti o preukaz");
 
 			Button returnToSender = new Button("Odoslaù ûiadosù sp‰ù ûiadateæovi za˙Ëelom doplnenia inform·ciÌ");
 			returnToSender.setPadding(new Insets(5,5,5,5));
@@ -86,17 +76,49 @@ public class SpracovatelPreukazu extends Spracovatel {
 			Button returnButton = new Button("Nasp‰ù");
 			returnButton.setPadding(new Insets(5,5,5,5));
 			
+			TextField input = new TextField();
+			input.setMaxWidth(150);
+			input.setEditable(false);
+			
+			Button writeAndReturn = new Button("Odoslaù");
+			writeAndReturn.setPadding(new Insets(5,5,5,5));
+			writeAndReturn.setVisible(false);
+			
+			HBox hBox = new HBox(10);
+			hBox.getChildren().addAll(input, writeAndReturn);
+			
 			VBox vBox = new VBox(10);
 			vBox.setPadding(new Insets(20,20,20,20));
 			vBox.setAlignment(Pos.CENTER);
-			vBox.getChildren().addAll(returnToSender, pitchRequest, returnButton);
+			vBox.getChildren().addAll(returnToSender, hBox, pitchRequest, returnButton);
 			
 			Scene sendScene = new Scene(vBox, 400, 400);
-			logWindow.setScene(sendScene);
+			processStage.setScene(sendScene);
 			
-			returnToSender.setOnAction(e -> spracovatelPreukazu.vratZiadost(HladanaZiadost));
-			pitchRequest.setOnAction(e -> choiceOfApprover(sendScene, spracovatelPreukazu, HladanaZiadost, logWindow, osoby));
-			returnButton.setOnAction(e -> logWindow.setScene(tableScene));
+			returnToSender.setOnAction(e -> { //sprÌstupnenie kolÛnky a tlaËidla
+				writeAndReturn.setVisible(true);
+				input.setEditable(true);
+			});
+			
+			writeAndReturn.setOnAction(e -> {
+				try {
+					if(input.getText().equals("")) throw new IOException();
+					System.out.println("Vr·tenie ûiadosti "+input.getText());
+					HladanaZiadost.setStav("éiadosù o preukaz bola spracovateæom odoslan· uûÌvateæovi na doplnenie ˙daju: "
+							+ input.getText());
+					writeAndReturn.setVisible(false);
+					input.clear();
+					input.setEditable(false);
+				}
+				catch (IOException error){
+					Alert v = new Alert(AlertType.ERROR);
+					v.setTitle("Chyba vstupu");
+					v.setContentText("IO Prazdny");
+					v.showAndWait();
+				}
+			});
+			pitchRequest.setOnAction(e -> choiceOfApprover(sendScene, spracovatelPreukazu, HladanaZiadost, processStage, osoby));
+			returnButton.setOnAction(e -> processStage.setScene(tableScene));
 			
 			int cinnost = 3;
 			int poradoveCislo = 0;
@@ -121,7 +143,7 @@ public class SpracovatelPreukazu extends Spracovatel {
 			}
 		}
 		
-		public void choiceOfApprover(Scene sendScene, SpracovatelPreukazu spracovatel, ZiadostOPreukaz ziadost, Stage logWindow, ArrayList<Osoba> osoby) {
+		public void choiceOfApprover(Scene sendScene, SpracovatelPreukazu spracovatel, ZiadostOPreukaz ziadost, Stage processStage, ArrayList<Osoba> osoby) {
 			
 			Button returnButton = new Button("Nasp‰ù");
 			returnButton.setPadding(new Insets(10,10,10,10));
@@ -157,12 +179,12 @@ public class SpracovatelPreukazu extends Spracovatel {
 			table.setPlaceholder(new Label("Nie s˙ prihl·senÌ ûiadni schvaæovatelia."));
 			
 			Scene tableScene = new Scene(vBox, 400, 400);
-			logWindow.setScene(tableScene);
+			processStage.setScene(tableScene);
 			
-			returnButton.setOnAction(e -> logWindow.setScene(sendScene));
+			returnButton.setOnAction(e -> processStage.setScene(sendScene));
 			processButton.setOnAction(e -> {
 				((Schvalovatel) table.getSelectionModel().getSelectedItem()).prijmiZiadost(ziadost);
-				logWindow.setScene(sendScene);	
+				processStage.setScene(sendScene);	
 			});
 			}
 		

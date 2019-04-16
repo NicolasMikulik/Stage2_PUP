@@ -19,16 +19,18 @@ import javafx.stage.Stage;
 import javafx.stage.Modality;
 import java.util.ArrayList;
 
-public class PrihlasenieSpracovatela extends Stage{
-
-	public PrihlasenieSpracovatela(SpracovatelPreukazu Spracovatel, ArrayList<Ziadost> ziadosti, Stage logWindow, ArrayList<Osoba> osoby) {
-		setTitle("Prihl·senie spracovateæa ûiadostÌ o preukaz");
-		initModality(Modality.WINDOW_MODAL);
-		setOnCloseRequest(e -> {
+public class PrihlasenieSpracovatela{
+	private Stage processStage;
+	
+	public PrihlasenieSpracovatela (SpracovatelPreukazu Spracovatel, ArrayList<Ziadost> ziadosti, ArrayList<Osoba> osoby) {
+		processStage = new Stage();
+		processStage.setTitle("Prihl·senie spracovateæa ûiadostÌ o preukaz");
+		processStage.initModality(Modality.APPLICATION_MODAL);
+		processStage.setOnCloseRequest(e -> {
 			e.consume();
 			closeWindow();
 		});
-
+		
 		Button existingRequests = new Button("Zobraziù vöetky podanÈ ûiadosti");
 		existingRequests.setPadding(new Insets(5,5,5,5));
 		Button ownRequests = new Button("Zobraziù Vami spracov·vanÈ ûiadosti");
@@ -49,21 +51,23 @@ public class PrihlasenieSpracovatela extends Stage{
 		borderPane.setCenter(vBox);
 		
 		Scene scene1 = new Scene(borderPane, 400, 400);
-		setScene(scene1);
+		Stage signedStage = new Stage();
+		signedStage.setScene(scene1);
+		processStage.setScene(scene1);
 		
-		existingRequests.setOnAction(e -> showExistingRequests(scene1, Spracovatel, ziadosti, logWindow, osoby));
-		ownRequests.setOnAction(e -> showOwnRequests(scene1, Spracovatel, Spracovatel.getZiadostiNaSpracovanie(), logWindow));
+		existingRequests.setOnAction(e -> showExistingRequests(scene1, Spracovatel, ziadosti, processStage, osoby));
+		ownRequests.setOnAction(e -> showOwnRequests(scene1, Spracovatel, Spracovatel.getZiadostiNaSpracovanie(), processStage));
 		
-		showAndWait();
+		processStage.showAndWait();
 	}
 	
 	public void closeWindow() {
 		boolean answer = ConfirmBox.display("Potvrdenie odhl·senia", "Chcete sa odhl·siù?");
 		if(answer)
-			close();
+			processStage.close();
 	}
 	
-public void showExistingRequests(Scene scene1, SpracovatelPreukazu spracovatel, ArrayList<Ziadost> ziadosti, Stage logWindow, ArrayList<Osoba> osoby) {
+public void showExistingRequests(Scene scene1, SpracovatelPreukazu spracovatel, ArrayList<Ziadost> ziadosti, Stage processStage, ArrayList<Osoba> osoby) {
 		
 		Button returnButton = new Button("Nasp‰ù");
 		returnButton.setPadding(new Insets(10,10,10,10));
@@ -98,13 +102,13 @@ public void showExistingRequests(Scene scene1, SpracovatelPreukazu spracovatel, 
 		table.setPlaceholder(new Label("Nem·te podanÈ ûiadne ûiadosti."));
 		
 		Scene tableScene = new Scene(vBox, 400, 400);
-		setScene(tableScene);
+		processStage.setScene(tableScene);
 		
-		returnButton.setOnAction(e -> setScene(scene1));
-		assignButton.setOnAction(e -> assignRequest(table.getSelectionModel().getSelectedItem(), spracovatel, logWindow, tableScene, osoby));
+		returnButton.setOnAction(e -> processStage.setScene(scene1));
+		assignButton.setOnAction(e -> assignRequest(table.getSelectionModel().getSelectedItem(), spracovatel, processStage, tableScene, osoby));
 }
 
-public void showOwnRequests(Scene scene1, SpracovatelPreukazu spracovatel, ArrayList<Ziadost> ziadosti, Stage logWindow) {
+public void showOwnRequests(Scene scene1, SpracovatelPreukazu spracovatel, ArrayList<Ziadost> ziadosti, Stage processStage) {
 	
 	Button returnButton = new Button("Nasp‰ù");
 	returnButton.setPadding(new Insets(10,10,10,10));
@@ -139,9 +143,9 @@ public void showOwnRequests(Scene scene1, SpracovatelPreukazu spracovatel, Array
 	table.setPlaceholder(new Label("Nem·te podanÈ ûiadne ûiadosti."));
 	
 	Scene tableScene = new Scene(vBox, 400, 400);
-	setScene(tableScene);
+	processStage.setScene(tableScene);
 	
-	returnButton.setOnAction(e -> setScene(scene1));
+	returnButton.setOnAction(e -> processStage.setScene(scene1));
 }
 
 	public ObservableList<Ziadost> getRequests(ArrayList<Ziadost> ziadosti) {
@@ -152,10 +156,12 @@ public void showOwnRequests(Scene scene1, SpracovatelPreukazu spracovatel, Array
 		return requests;
 	}
 
-	public void assignRequest(Ziadost ziadost, SpracovatelPreukazu spracovatel, Stage logWindow, Scene tableScene, ArrayList<Osoba> osoby) {
+	
+	
+	public void assignRequest(Ziadost ziadost, SpracovatelPreukazu spracovatel, Stage processStage, Scene tableScene, ArrayList<Osoba> osoby) {
 		try {
 			if(false == ziadost instanceof ZiadostOPreukaz) throw new NeplatnaVolba();
-			ziadost.kontrolaZiadosti(ziadost, spracovatel, logWindow, tableScene, osoby);
+			ziadost.kontrolaZiadosti(ziadost, spracovatel, processStage, tableScene, osoby);
 		}
 		catch (NeplatnaVolba warning){
 			Alert incorrect = new Alert(AlertType.WARNING);

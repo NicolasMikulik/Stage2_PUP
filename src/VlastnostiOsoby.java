@@ -1,6 +1,5 @@
-import javafx.stage.Stage;
 
-public abstract class VlastnostiOsoby extends Stage{
+public abstract class VlastnostiOsoby{
 	protected String MenoOsoby = "def";
 	protected String Identifikacia = "";
 	protected String IdentifikacneCislo = "";

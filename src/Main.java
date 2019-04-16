@@ -97,7 +97,7 @@ public class Main extends Application{
 										if(osoba.getMenoOsoby().equals(name) && osoba instanceof SpracovatelPreukazu) {
 												if(((SpracovatelPreukazu) osoba).getHeslo().equals(password)) {
 													found = true;
-													new PrihlasenieSpracovatela((SpracovatelPreukazu) osoba, ziadosti, logWindow, osoby);
+													new PrihlasenieSpracovatela((SpracovatelPreukazu) osoba, ziadosti, osoby);
 													break;
 												}
 												else {
@@ -110,7 +110,7 @@ public class Main extends Application{
 										if(false == found) {
 											poradie = osoby.size();
 											osoby.add(new SpracovatelPreukazu(nameInput.getText(), passInput.getText(), poradie));
-											new PrihlasenieSpracovatela((SpracovatelPreukazu) osoby.get(poradie), ziadosti, logWindow, osoby);
+											new PrihlasenieSpracovatela((SpracovatelPreukazu) osoby.get(poradie), ziadosti, osoby);
 										}
 									break;
 		default: break;
