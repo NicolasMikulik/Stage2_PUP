@@ -3,6 +3,7 @@ import java.util.Scanner;
 
 public class Schvalovatel extends Spracovatel{	
 	private ArrayList <Ziadost> ZiadostiNaSpracovanie = new ArrayList<Ziadost>();
+	private String Heslo;
 	
 	public Notifikacia getNotifikaciaOsoby() {
 		return NotifikaciaOsoby;
@@ -25,12 +26,27 @@ public class Schvalovatel extends Spracovatel{
 		System.out.print("Ziadost bola prijata SCHVALOVATELOM."+ziadost.getSchvalovatel().getMenoOsoby());
 	}
 	
+	public void vratZiadostSpracovatelovi(Ziadost HladanaZiadost, String comment) {
+		System.out.print("Ziadost bola SCHVALOVATELOM odoslana naspat spracovatelovi. " + comment);
+		HladanaZiadost.setStav("Ziadost bola SCHVALOVATELOM odoslana spracovatelovi na doplnenie udaju: "+comment);
+		HladanaZiadost.setDoplnenie(true);
+		HladanaZiadost.setSchvalovatel(null);
+		this.ZiadostiNaSpracovanie.remove(HladanaZiadost);
+	}
+	
 	public void vratZiadostSpracovatelovi(Ziadost HladanaZiadost, Scanner scanner) {
 		System.out.println("Napiste, ktore udaje ma spracovatel k ziadosti doplnit: ");
 		scanner.nextLine();
 		String doplnenie = scanner.nextLine();
 		System.out.print("Ziadost bola SCHVALOVATELOM odoslana naspat spracovatelovi.");
 		HladanaZiadost.setStav("Ziadost bola SCHVALOVATELOM odoslana spracovatelovi na doplnenie udaju: "+doplnenie);
+		HladanaZiadost.setSchvalovatel(null);
+		this.ZiadostiNaSpracovanie.remove(HladanaZiadost);
+	}
+	
+	public void pridelZiadostSpracovatelovi(Ziadost HladanaZiadost, String comment) {
+		System.out.print("Ziadost bola SCHVALOVATELOM pridelena spracovatelovi. "+comment);
+		HladanaZiadost.setStav("Ziadost bola SCHVALOVATELOM pridelena spracovatelovi na doplnenie udaju: "+comment);
 		HladanaZiadost.setSchvalovatel(null);
 		this.ZiadostiNaSpracovanie.remove(HladanaZiadost);
 	}
@@ -44,12 +60,32 @@ public class Schvalovatel extends Spracovatel{
 		this.ZiadostiNaSpracovanie.remove(HladanaZiadost);
 	}
 	
+	public void zamietniZiadost(Ziadost HladanaZiadost, ArrayList<Ziadost> ziadosti, String comment) {
+		System.out.print("Ziadost bola SCHVALOVATELOM posudena (ukoncena) a poslana naspat ziadatelovi. "+comment);
+		HladanaZiadost.setStav("Ziadost bola SCHVALOVATELOM zamietnuta z dovodu: "+comment); 
+		HladanaZiadost.setSchvalovatel(null);
+		HladanaZiadost.setSpracovatel(null);
+		HladanaZiadost.setAktivna(false);
+		this.ZiadostiNaSpracovanie.remove(HladanaZiadost);
+		ziadosti.remove(HladanaZiadost);
+	}
+	
 	public void zamietniZiadost(Ziadost HladanaZiadost, ArrayList<Ziadost> ziadosti, Scanner scanner) {
 		System.out.println("Napiste, z akeho dovodu ziadost zamietate: ");
 		scanner.nextLine();
 		String zamietnutie = scanner.nextLine();
 		System.out.print("Ziadost bola SCHVALOVATELOM posudena (ukoncena) a poslana naspat ziadatelovi.");
 		HladanaZiadost.setStav("Ziadost bola SCHVALOVATELOM zamietnuta z dovodu: "+zamietnutie);
+		HladanaZiadost.setSchvalovatel(null);
+		HladanaZiadost.setSpracovatel(null);
+		HladanaZiadost.setAktivna(false);
+		this.ZiadostiNaSpracovanie.remove(HladanaZiadost);
+		ziadosti.remove(HladanaZiadost);
+	}
+	
+	public void schvalZiadost(Ziadost HladanaZiadost, ArrayList<Ziadost> ziadosti, String comment) {
+		System.out.println("Ziadost bola SCHVALOVATELOM posudena (ukoncena) a poslana naspat ziadatelovi. "+comment);
+		HladanaZiadost.setStav("Ziadost bola SCHVALOVATELOM posudena (ukoncena) a schvalena s vyjadrenim: "+comment);
 		HladanaZiadost.setSchvalovatel(null);
 		HladanaZiadost.setSpracovatel(null);
 		HladanaZiadost.setAktivna(false);
@@ -73,5 +109,12 @@ public class Schvalovatel extends Spracovatel{
 	
 	public void setZiadostiNaSpracovanie(ArrayList<Ziadost> ziadostiNaSpracovanie) {
 		ZiadostiNaSpracovanie = ziadostiNaSpracovanie;
+	}
+	
+	public void setHeslo(String Heslo) {
+		this.Heslo = Heslo;
+	}
+	public String getHeslo() {
+		return Heslo;
 	}
 }

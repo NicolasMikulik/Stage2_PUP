@@ -34,4 +34,10 @@ public class Spracovatel extends VlastnostiOsoby implements Osoba{
 	public void setIdentifikacia(String identifikacia) {
 		Identifikacia = identifikacia;
 	}
+	public void setHeslo(String Heslo) {
+		this.Heslo = Heslo;
+	}
+	public String getHeslo() {
+		return Heslo;
+	}
 }

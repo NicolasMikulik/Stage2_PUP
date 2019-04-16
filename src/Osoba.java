@@ -10,4 +10,6 @@ public interface Osoba {
 	public void setPoradoveCislo(int poradoveCislo);
 	public Notifikacia getNotifikaciaOsoby();
 	public void setNotifikaciaOsoby(Notifikacia notifikaciaOsoby);
+	public void setHeslo(String Heslo);
+	public String getHeslo();
 }

@@ -11,6 +11,7 @@ public class RocnyVykazCinnosti implements Ziadost{
 	private String TypAsistencie;
 	private int PoradoveCislo = 0;
 	private boolean Aktivna = false;
+	private boolean Doplnenie;
 	private Osoba Ziadatel = null;
 	private Osoba Spracovatel = null;
 	private Osoba Schvalovatel = null;
@@ -149,5 +150,13 @@ public class RocnyVykazCinnosti implements Ziadost{
 
 	public void setTypAsistencie(String typAsistencie) {
 		TypAsistencie = typAsistencie;
+	}
+
+	public boolean isDoplnenie() {
+		return Doplnenie;
+	}
+
+	public void setDoplnenie(boolean doplnenie) {
+		Doplnenie = doplnenie;
 	}
 }

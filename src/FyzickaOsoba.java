@@ -3,7 +3,6 @@ import java.util.ArrayList;
 
 public class FyzickaOsoba extends VlastnostiOsoby implements Osoba{
 	private ArrayList<Ziadost> Ziadosti = new ArrayList<Ziadost>();
-	private String Heslo;
 	
 	public void setHeslo(String Heslo) {
 		this.Heslo = Heslo;

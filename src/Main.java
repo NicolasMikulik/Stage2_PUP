@@ -113,6 +113,26 @@ public class Main extends Application{
 											new PrihlasenieSpracovatela((SpracovatelPreukazu) osoby.get(poradie), ziadosti, osoby);
 										}
 									break;
+		case "Schva¾ovate¾": for(Osoba osoba : osoby) {
+										if(osoba.getMenoOsoby().equals(name) && osoba instanceof Schvalovatel) {
+												if(((Schvalovatel) osoba).getHeslo().equals(password)) {
+													found = true;
+													new PrihlasenieSchvalovatela((Schvalovatel) osoba, ziadosti, osoby);
+													break;
+												}
+												else {
+													found = true;
+													System.out.println("Nesprávne meno alebo heslo SCHVALOVATELA.");
+													break;
+												}
+											}
+										}
+										if(false == found) {
+											poradie = osoby.size();
+											osoby.add(new Schvalovatel(nameInput.getText(), passInput.getText(), poradie));
+											new PrihlasenieSchvalovatela((Schvalovatel) osoby.get(poradie), ziadosti, osoby);
+										}
+									break;
 		default: break;
 		}
 	}

@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import javafx.scene.*;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.*;
 import javafx.stage.*;
 import javafx.geometry.*;
@@ -547,12 +548,21 @@ public class PrihlasenieZiadatela extends Stage{
 		returnButton.setPadding(new Insets(10,10,10,10));
 		Button cancelRequestButton = new Button("Stiahnuù ûiadosù");
 		cancelRequestButton.setPadding(new Insets(10,10,10,10));
+		Button updateRequest = new Button("Doplniù ˙daje");
+		updateRequest.setPadding(new Insets(10,10,10,10));
+		Button writeAndReturn = new Button("Odoslaù");
+		writeAndReturn.setPadding(new Insets(5,5,5,5));
+		writeAndReturn.setVisible(false);
+		
+		TextField input = new TextField();
+		input.setMaxWidth(150);
+		input.setEditable(false);
 		
 		TableView<Ziadost> table = new TableView<>();
 		
 		HBox hBox = new HBox(10);
 		hBox.setAlignment(Pos.CENTER);
-		hBox.getChildren().addAll(cancelRequestButton, returnButton);
+		hBox.getChildren().addAll(returnButton, cancelRequestButton, updateRequest, input, writeAndReturn);
 		
 		VBox vBox = new VBox(10);
 		vBox.setAlignment(Pos.CENTER);
@@ -577,6 +587,30 @@ public class PrihlasenieZiadatela extends Stage{
 		
 		returnButton.setOnAction(e -> setScene(scene1));
 		cancelRequestButton.setOnAction(e -> cancelRequest(table, ziadosti));
+		updateRequest.setOnAction(e ->{
+			if(table.getSelectionModel().getSelectedItem().isDoplnenie()) {
+			writeAndReturn.setVisible(true);
+			input.setEditable(true);
+			}
+		});
+		writeAndReturn.setOnAction(e -> {
+			try {
+				if(input.getText().equals("")) throw new IOException();
+				System.out.println("Update ûiadosti "+input.getText());
+				table.getSelectionModel().getSelectedItem().setStav("éiadosù o preukaz bola ûiadateæom doplnen· o ˙daj: "
+						+ input.getText());
+				table.getSelectionModel().getSelectedItem().setDoplnujuceInformacie(input.getText());
+				table.getSelectionModel().getSelectedItem().setDoplnenie(false);
+				input.clear();
+				input.setEditable(false);
+
+			}	catch (IOException error){
+				Alert v = new Alert(AlertType.ERROR);
+				v.setTitle("Chyba vstupu");
+				v.setContentText("IO Prazdny");
+				v.showAndWait();
+			}
+		});
 	}
 	
 public void viewOwnRequests(Scene scene1, PravnickaOsoba Ziadatel, ArrayList<Ziadost> ziadosti) {

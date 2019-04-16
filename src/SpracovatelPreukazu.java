@@ -8,14 +8,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import java.io.*;
 
 public class SpracovatelPreukazu extends Spracovatel {
 		private ArrayList <Ziadost> ZiadostiNaSpracovanie = new ArrayList<Ziadost>();
-		
-		private String Heslo;
 		
 		public void setHeslo(String Heslo) {
 			this.Heslo = Heslo;
@@ -106,6 +103,7 @@ public class SpracovatelPreukazu extends Spracovatel {
 					System.out.println("Vrátenie žiadosti "+input.getText());
 					HladanaZiadost.setStav("Žiados o preukaz bola spracovate¾om odoslaná užívate¾ovi na doplnenie údaju: "
 							+ input.getText());
+					HladanaZiadost.setDoplnenie(true);
 					writeAndReturn.setVisible(false);
 					input.clear();
 					input.setEditable(false);
@@ -119,28 +117,6 @@ public class SpracovatelPreukazu extends Spracovatel {
 			});
 			pitchRequest.setOnAction(e -> choiceOfApprover(sendScene, spracovatelPreukazu, HladanaZiadost, processStage, osoby));
 			returnButton.setOnAction(e -> processStage.setScene(tableScene));
-			
-			int cinnost = 3;
-			int poradoveCislo = 0;
-			Schvalovatel HladanySchvalovatel = null;
-			System.out.print("Zadajte:\n1) pre odoslanie ziadosti ziadatelovi za ucelom doplnenia udajov"
-					+ "2) pre poslanie ziadosti schvalovatelovi 3) pre zrusenie cinnosti");
-			switch (cinnost) {
-			case 1 : spracovatelPreukazu.vratZiadost(HladanaZiadost);
-					break;
-			case 2 :for(Osoba osoba: osoby) 
-						if(osoba instanceof Schvalovatel && osoba.getIdentifikacia().equals("SC")) 
-							System.out.println(osoba.getPoradoveCislo()+" "+osoba.getMenoOsoby()+" "+osoba.getIdentifikacia()+" Heureka!");
-				 	System.out.println("Zvolte cislo schvalovatela, ktoremu chcete poslat ziadost na schvalenie:");
-					HladanySchvalovatel = (Schvalovatel) osoby.get(poradoveCislo);
-					HladanySchvalovatel.prijmiZiadost(HladanaZiadost);
-					HladanaZiadost.vypisUdajeZiadosti();
-					break;
-			case 3 : System.out.println("Zvolili ste zrusenie cinnosti.");
-					break;
-			default: System.out.println("Neznama cinnost."); 
-					break;
-			}
 		}
 		
 		public void choiceOfApprover(Scene sendScene, SpracovatelPreukazu spracovatel, ZiadostOPreukaz ziadost, Stage processStage, ArrayList<Osoba> osoby) {

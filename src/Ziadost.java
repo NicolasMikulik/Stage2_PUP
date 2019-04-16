@@ -28,4 +28,6 @@ public interface Ziadost {
 	public String getIdentifikacneCisloZiadatela();
 	public void setIdentifikacneCisloZiadatela(String identifikacneCisloZiadatela);
 	public void kontrolaZiadosti(Ziadost ziadost, Spracovatel spracovatel, Stage mainStage, Scene tableScene, ArrayList<Osoba> osoby);
+	public boolean isDoplnenie();
+	public void setDoplnenie(boolean doplnenie);
 }

@@ -56,7 +56,7 @@ public class PrihlasenieSpracovatela{
 		processStage.setScene(scene1);
 		
 		existingRequests.setOnAction(e -> showExistingRequests(scene1, Spracovatel, ziadosti, processStage, osoby));
-		ownRequests.setOnAction(e -> showOwnRequests(scene1, Spracovatel, Spracovatel.getZiadostiNaSpracovanie(), processStage));
+		ownRequests.setOnAction(e -> showOwnRequests(scene1, Spracovatel, Spracovatel.getZiadostiNaSpracovanie(), processStage, osoby));
 		
 		processStage.showAndWait();
 	}
@@ -108,7 +108,7 @@ public void showExistingRequests(Scene scene1, SpracovatelPreukazu spracovatel, 
 		assignButton.setOnAction(e -> assignRequest(table.getSelectionModel().getSelectedItem(), spracovatel, processStage, tableScene, osoby));
 }
 
-public void showOwnRequests(Scene scene1, SpracovatelPreukazu spracovatel, ArrayList<Ziadost> ziadosti, Stage processStage) {
+public void showOwnRequests(Scene scene1, SpracovatelPreukazu spracovatel, ArrayList<Ziadost> ziadosti, Stage processStage,  ArrayList<Osoba> osoby) {
 	
 	Button returnButton = new Button("Naspä");
 	returnButton.setPadding(new Insets(10,10,10,10));
@@ -146,6 +146,8 @@ public void showOwnRequests(Scene scene1, SpracovatelPreukazu spracovatel, Array
 	processStage.setScene(tableScene);
 	
 	returnButton.setOnAction(e -> processStage.setScene(scene1));
+	processButton.setOnAction(e -> ((SpracovatelPreukazu) spracovatel).spracovanieZiadosti((SpracovatelPreukazu) spracovatel, 
+			(ZiadostOPreukaz) table.getSelectionModel().getSelectedItem(), processStage, tableScene, osoby));
 }
 
 	public ObservableList<Ziadost> getRequests(ArrayList<Ziadost> ziadosti) {

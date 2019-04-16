@@ -12,6 +12,7 @@ public class ZiadostOPreukaz implements Ziadost {
 		private String IdentifikacneCisloZiadatela;
 		private int PoradoveCislo = 0;
 		private boolean Aktivna = false;
+		private boolean Doplnenie;
 		private Osoba Ziadatel = null;
 		private Osoba Spracovatel = null;
 		private Osoba Schvalovatel = null;
@@ -161,5 +162,13 @@ public class ZiadostOPreukaz implements Ziadost {
 
 		public void setIdentifikacneCisloZiadatela(String identifikacneCisloZiadatela) {
 			IdentifikacneCisloZiadatela = identifikacneCisloZiadatela;
+		}
+
+		public boolean isDoplnenie() {
+			return Doplnenie;
+		}
+
+		public void setDoplnenie(boolean doplnenie) {
+			Doplnenie = doplnenie;
 		}
 }
