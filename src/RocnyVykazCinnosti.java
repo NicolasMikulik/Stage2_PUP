@@ -1,5 +1,8 @@
 import java.util.ArrayList;
 
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
 public class RocnyVykazCinnosti implements Ziadost{
 	private String MenoZiadatela = "";
 	private String Stav = "";
@@ -23,8 +26,8 @@ public class RocnyVykazCinnosti implements Ziadost{
 		setIdentifikacneCisloZiadatela(securityNumber);
 		setPocetHodin(hours);
 		setTypAsistencie(typeOfAssistance);
-		setStav("Rocny vykaz cinnosti bol podany.");
-		setDruh("Vykaz");
+		setStav("Roènı vıkaz èinností bol podanı.");
+		setDruh("Vıkaz");
 		setAktivna(true);
 	}
 	
@@ -36,6 +39,33 @@ public class RocnyVykazCinnosti implements Ziadost{
 		System.out.println(getPoradoveCislo()+" "+getPocetHodin()+" "+getStav()+" "+getMenoZiadatela()+" "+MenoSpracovatela
 				+" "+MenoSchvalovatela+" "+getDoplnujuceInformacie()+" "+getDruh());
 	}
+	
+	public void kontrolaZiadosti(Ziadost ziadost, Spracovatel spracovatel, Stage processStage, Scene tableScene, ArrayList<Osoba> osoby) {
+		boolean process = false;
+			if (null == ziadost.getSpracovatel()) {
+				boolean assign = ConfirmBox.display("Potvrdenie prijatia", "Zvolenı roènı vıkaz èinností nikto"
+						+ " nespracováva. Chcete prija tento vıkaz? iadate¾ bude informovanı o prijatí.");
+				if (assign) {
+					 spracovatel.prijmiZiadost((RocnyVykazCinnosti) ziadost);
+					 process = ConfirmBox.display("Spracovanie", "Zvolenı vıkaz je Vám pridelenı, eláte si prejs k jeho spracovaniu?");
+						if(process) {
+							((SpracovatelVykazu) spracovatel).spracovanieZiadosti((SpracovatelVykazu) spracovatel, (RocnyVykazCinnosti) ziadost, processStage, tableScene, osoby);
+						}
+				}
+				else {AlertBox.display("Zamietnutie prijatia", "Zvolenı vıkaz Vám nebude pridelenı.");}
+				}
+			else {
+				if (false == ziadost.getSpracovatel().getMenoOsoby().equals(spracovatel.getMenoOsoby())) {
+					AlertBox.display("Neplatná vo¾ba", "Zvolenı vıkaz spracováva inı spracovate¾,"
+							+ " teda ho nemôete prija.");}
+				else {
+					process = ConfirmBox.display("Neplatná vo¾ba", "Zvolenı vıkaz je Vám u pridelenı, eláte si prejs k jeho spracovaniu?");
+					if(process) {
+						((SpracovatelVykazu) spracovatel).spracovanieZiadosti((SpracovatelVykazu) spracovatel, (RocnyVykazCinnosti) ziadost, processStage, tableScene, osoby);
+					}
+				}
+			}
+		}
 	
 	public void pridajInformovanuOsobu(Osoba osoba) {
 		this.getInformovaneOsoby().add(osoba);

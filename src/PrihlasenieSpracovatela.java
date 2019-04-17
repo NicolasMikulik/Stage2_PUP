@@ -61,6 +61,84 @@ public class PrihlasenieSpracovatela{
 		processStage.showAndWait();
 	}
 	
+	public PrihlasenieSpracovatela (SpracovatelPrispevku spracovatel, ArrayList<Ziadost> ziadosti, ArrayList<Osoba> osoby) {
+		processStage = new Stage();
+		processStage.setTitle("Prihl·senie spracovateæa ûiadostÌ o prÌspevok");
+		processStage.initModality(Modality.APPLICATION_MODAL);
+		processStage.setOnCloseRequest(e -> {
+			e.consume();
+			closeWindow();
+		});
+		
+		Button existingRequests = new Button("Zobraziù vöetky podanÈ ûiadosti");
+		existingRequests.setPadding(new Insets(5,5,5,5));
+		Button ownRequests = new Button("Zobraziù Vami spracov·vanÈ ûiadosti");
+		ownRequests.setPadding(new Insets(5,5,5,5));
+		Button signOutButton = new Button("Odhl·siù");
+		signOutButton.setPadding(new Insets(5,5,5,5));
+		signOutButton.setOnAction(e -> closeWindow());
+		
+		VBox vBox = new VBox(10);
+		vBox.setPadding(new Insets(20,20,20,20));
+		vBox.setAlignment(Pos.CENTER);
+		vBox.getChildren().addAll(existingRequests, ownRequests);
+		
+		BorderPane borderPane = new BorderPane();
+		borderPane.setBottom(signOutButton);
+		borderPane.setPadding(new Insets(10,10,10,10));
+		BorderPane.setAlignment(signOutButton, Pos.BOTTOM_RIGHT);
+		borderPane.setCenter(vBox);
+		
+		Scene scene1 = new Scene(borderPane, 400, 400);
+		Stage signedStage = new Stage();
+		signedStage.setScene(scene1);
+		processStage.setScene(scene1);
+		
+		existingRequests.setOnAction(e -> showExistingRequests(scene1, spracovatel, ziadosti, processStage, osoby));
+		ownRequests.setOnAction(e -> showOwnRequests(scene1, spracovatel, spracovatel.getZiadostiNaSpracovanie(), processStage, osoby));
+		
+		processStage.showAndWait();
+	}
+	
+	public PrihlasenieSpracovatela (SpracovatelVykazu Spracovatel, ArrayList<Ziadost> ziadosti, ArrayList<Osoba> osoby) {
+		processStage = new Stage();
+		processStage.setTitle("Prihl·senie spracovateæa roËnÈho v˝kazu ËinnostÌ");
+		processStage.initModality(Modality.APPLICATION_MODAL);
+		processStage.setOnCloseRequest(e -> {
+			e.consume();
+			closeWindow();
+		});
+		
+		Button existingRequests = new Button("Zobraziù vöetky podanÈ v˝kazy");
+		existingRequests.setPadding(new Insets(5,5,5,5));
+		Button ownRequests = new Button("Zobraziù Vami spracov·vanÈ v˝kazy");
+		ownRequests.setPadding(new Insets(5,5,5,5));
+		Button signOutButton = new Button("Odhl·siù");
+		signOutButton.setPadding(new Insets(5,5,5,5));
+		signOutButton.setOnAction(e -> closeWindow());
+		
+		VBox vBox = new VBox(10);
+		vBox.setPadding(new Insets(20,20,20,20));
+		vBox.setAlignment(Pos.CENTER);
+		vBox.getChildren().addAll(existingRequests, ownRequests);
+		
+		BorderPane borderPane = new BorderPane();
+		borderPane.setBottom(signOutButton);
+		borderPane.setPadding(new Insets(10,10,10,10));
+		BorderPane.setAlignment(signOutButton, Pos.BOTTOM_RIGHT);
+		borderPane.setCenter(vBox);
+		
+		Scene scene1 = new Scene(borderPane, 400, 400);
+		Stage signedStage = new Stage();
+		signedStage.setScene(scene1);
+		processStage.setScene(scene1);
+		
+		existingRequests.setOnAction(e -> showExistingRequests(scene1, Spracovatel, ziadosti, processStage, osoby));
+		ownRequests.setOnAction(e -> showOwnRequests(scene1, Spracovatel, Spracovatel.getZiadostiNaSpracovanie(), processStage, osoby));
+		
+		processStage.showAndWait();
+	}
+	
 	public void closeWindow() {
 		boolean answer = ConfirmBox.display("Potvrdenie odhl·senia", "Chcete sa odhl·siù?");
 		if(answer)
@@ -99,13 +177,95 @@ public void showExistingRequests(Scene scene1, SpracovatelPreukazu spracovatel, 
 		table.getColumns().add(typeColumn);
 		table.getColumns().add(statusColumn);
 		table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-		table.setPlaceholder(new Label("Nem·te podanÈ ûiadne ûiadosti."));
+		table.setPlaceholder(new Label("Nie s˙ podanÈ ûiadne ûiadosti."));
 		
 		Scene tableScene = new Scene(vBox, 400, 400);
 		processStage.setScene(tableScene);
 		
 		returnButton.setOnAction(e -> processStage.setScene(scene1));
 		assignButton.setOnAction(e -> assignRequest(table.getSelectionModel().getSelectedItem(), spracovatel, processStage, tableScene, osoby));
+}
+
+public void showExistingRequests(Scene scene1, SpracovatelPrispevku spracovatel, ArrayList<Ziadost> ziadosti, Stage processStage, ArrayList<Osoba> osoby) {
+	
+	Button returnButton = new Button("Nasp‰ù");
+	returnButton.setPadding(new Insets(10,10,10,10));
+	Button assignButton = new Button("Prijaù");
+	assignButton.setPadding(new Insets(10,10,10,10));
+	
+	Label label = new Label("Kliknite na ûiadosù, ktor˙ chcete spracovaù a stlaËte tlaËidlo ¥Prijaù¥");
+	label.setPadding(new Insets(10,0,10,0));
+	
+	TableView<Ziadost> table = new TableView<>();
+	
+	HBox hBox = new HBox(10);
+	hBox.setAlignment(Pos.CENTER);
+	hBox.getChildren().addAll(assignButton, returnButton);
+	
+	VBox vBox = new VBox(10);
+	vBox.setAlignment(Pos.CENTER);
+	vBox.getChildren().addAll(table, hBox);
+	
+	TableColumn<Ziadost, String> typeColumn = new TableColumn<>("Typ ûiadosti");
+	typeColumn.setMinWidth(50);
+	typeColumn.setCellValueFactory(new PropertyValueFactory<Ziadost, String>("Druh"));
+	
+	TableColumn<Ziadost, String> statusColumn = new TableColumn<>("Stav");
+	statusColumn.setMinWidth(300);
+	statusColumn.setCellValueFactory(new PropertyValueFactory<Ziadost, String>("Stav"));
+	
+	table.setItems(getRequests(ziadosti)); //pretypovanie pomocou vlastnej metody, samotne pretypovanie na Observable List zobrazovalo varovanie
+	table.getColumns().add(typeColumn);
+	table.getColumns().add(statusColumn);
+	table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+	table.setPlaceholder(new Label("Nie s˙ podanÈ ûiadne ûiadosti."));
+	
+	Scene tableScene = new Scene(vBox, 400, 400);
+	processStage.setScene(tableScene);
+	
+	returnButton.setOnAction(e -> processStage.setScene(scene1));
+	assignButton.setOnAction(e -> assignRequest(table.getSelectionModel().getSelectedItem(), spracovatel, processStage, tableScene, osoby));
+}
+
+public void showExistingRequests(Scene scene1, SpracovatelVykazu spracovatel, ArrayList<Ziadost> ziadosti, Stage processStage, ArrayList<Osoba> osoby) {
+	
+	Button returnButton = new Button("Nasp‰ù");
+	returnButton.setPadding(new Insets(10,10,10,10));
+	Button assignButton = new Button("Prijaù");
+	assignButton.setPadding(new Insets(10,10,10,10));
+	
+	Label label = new Label("Kliknite na v˝kaz, ktor˝ chcete spracovaù a stlaËte tlaËidlo ¥Prijaù¥");
+	label.setPadding(new Insets(10,0,10,0));
+	
+	TableView<Ziadost> table = new TableView<>();
+	
+	HBox hBox = new HBox(10);
+	hBox.setAlignment(Pos.CENTER);
+	hBox.getChildren().addAll(assignButton, returnButton);
+	
+	VBox vBox = new VBox(10);
+	vBox.setAlignment(Pos.CENTER);
+	vBox.getChildren().addAll(table, hBox);
+	
+	TableColumn<Ziadost, String> typeColumn = new TableColumn<>("Typ ûiadosti");
+	typeColumn.setMinWidth(50);
+	typeColumn.setCellValueFactory(new PropertyValueFactory<Ziadost, String>("Druh"));
+	
+	TableColumn<Ziadost, String> statusColumn = new TableColumn<>("Stav");
+	statusColumn.setMinWidth(300);
+	statusColumn.setCellValueFactory(new PropertyValueFactory<Ziadost, String>("Stav"));
+	
+	table.setItems(getRequests(ziadosti)); //pretypovanie pomocou vlastnej metody, samotne pretypovanie na Observable List zobrazovalo varovanie
+	table.getColumns().add(typeColumn);
+	table.getColumns().add(statusColumn);
+	table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+	table.setPlaceholder(new Label("Nie s˙ podanÈ ûiadne v˝kazy."));
+	
+	Scene tableScene = new Scene(vBox, 400, 400);
+	processStage.setScene(tableScene);
+	
+	returnButton.setOnAction(e -> processStage.setScene(scene1));
+	assignButton.setOnAction(e -> assignRequest(table.getSelectionModel().getSelectedItem(), spracovatel, processStage, tableScene, osoby));
 }
 
 public void showOwnRequests(Scene scene1, SpracovatelPreukazu spracovatel, ArrayList<Ziadost> ziadosti, Stage processStage,  ArrayList<Osoba> osoby) {
@@ -150,6 +310,90 @@ public void showOwnRequests(Scene scene1, SpracovatelPreukazu spracovatel, Array
 			(ZiadostOPreukaz) table.getSelectionModel().getSelectedItem(), processStage, tableScene, osoby));
 }
 
+public void showOwnRequests(Scene scene1, SpracovatelPrispevku spracovatel, ArrayList<Ziadost> ziadosti, Stage processStage,  ArrayList<Osoba> osoby) {
+	
+	Button returnButton = new Button("Nasp‰ù");
+	returnButton.setPadding(new Insets(10,10,10,10));
+	Button processButton = new Button("Spracovaù");
+	processButton.setPadding(new Insets(10,10,10,10));
+	
+	Label label = new Label("Kliknite na ûiadosù, ktor˙ chcete spracovaù a stlaËte tlaËidlo ¥Spracovaù¥");
+	label.setPadding(new Insets(10,0,10,0));
+	
+	TableView<Ziadost> table = new TableView<>();
+	
+	HBox hBox = new HBox(10);
+	hBox.setAlignment(Pos.CENTER);
+	hBox.getChildren().addAll(processButton, returnButton);
+	
+	VBox vBox = new VBox(10);
+	vBox.setAlignment(Pos.CENTER);
+	vBox.getChildren().addAll(table, label, hBox);
+	
+	TableColumn<Ziadost, String> typeColumn = new TableColumn<>("Typ ûiadosti");
+	typeColumn.setMinWidth(50);
+	typeColumn.setCellValueFactory(new PropertyValueFactory<Ziadost, String>("Druh"));
+	
+	TableColumn<Ziadost, String> statusColumn = new TableColumn<>("Stav");
+	statusColumn.setMinWidth(300);
+	statusColumn.setCellValueFactory(new PropertyValueFactory<Ziadost, String>("Stav"));
+	
+	table.setItems(getRequests(ziadosti)); //pretypovanie pomocou vlastnej metody, samotne pretypovanie na Observable List zobrazovalo varovanie
+	table.getColumns().add(typeColumn);
+	table.getColumns().add(statusColumn);
+	table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+	table.setPlaceholder(new Label("Nem·te podanÈ ûiadne ûiadosti."));
+	
+	Scene tableScene = new Scene(vBox, 400, 400);
+	processStage.setScene(tableScene);
+	
+	returnButton.setOnAction(e -> processStage.setScene(scene1));
+	processButton.setOnAction(e -> ((SpracovatelPrispevku) spracovatel).spracovanieZiadosti((SpracovatelPrispevku) spracovatel, 
+			(ZiadostOPrispevok) table.getSelectionModel().getSelectedItem(), processStage, tableScene, osoby));
+}
+
+public void showOwnRequests(Scene scene1, SpracovatelVykazu spracovatel, ArrayList<Ziadost> ziadosti, Stage processStage,  ArrayList<Osoba> osoby) {
+	
+	Button returnButton = new Button("Nasp‰ù");
+	returnButton.setPadding(new Insets(10,10,10,10));
+	Button processButton = new Button("Spracovaù");
+	processButton.setPadding(new Insets(10,10,10,10));
+	
+	Label label = new Label("Kliknite na v˝kaz, ktor˝ chcete spracovaù a stlaËte tlaËidlo ¥Spracovaù¥");
+	label.setPadding(new Insets(10,0,10,0));
+	
+	TableView<Ziadost> table = new TableView<>();
+	
+	HBox hBox = new HBox(10);
+	hBox.setAlignment(Pos.CENTER);
+	hBox.getChildren().addAll(processButton, returnButton);
+	
+	VBox vBox = new VBox(10);
+	vBox.setAlignment(Pos.CENTER);
+	vBox.getChildren().addAll(table, label, hBox);
+	
+	TableColumn<Ziadost, String> typeColumn = new TableColumn<>("Typ ûiadosti");
+	typeColumn.setMinWidth(50);
+	typeColumn.setCellValueFactory(new PropertyValueFactory<Ziadost, String>("Druh"));
+	
+	TableColumn<Ziadost, String> statusColumn = new TableColumn<>("Stav");
+	statusColumn.setMinWidth(300);
+	statusColumn.setCellValueFactory(new PropertyValueFactory<Ziadost, String>("Stav"));
+	
+	table.setItems(getRequests(ziadosti)); //pretypovanie pomocou vlastnej metody, samotne pretypovanie na Observable List zobrazovalo varovanie
+	table.getColumns().add(typeColumn);
+	table.getColumns().add(statusColumn);
+	table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+	table.setPlaceholder(new Label("Nie s˙ podanÈ ûiadne v˝kazy."));
+	
+	Scene tableScene = new Scene(vBox, 400, 400);
+	processStage.setScene(tableScene);
+	
+	returnButton.setOnAction(e -> processStage.setScene(scene1));
+	processButton.setOnAction(e -> ((SpracovatelVykazu) spracovatel).spracovanieZiadosti((SpracovatelVykazu) spracovatel, 
+			(RocnyVykazCinnosti) table.getSelectionModel().getSelectedItem(), processStage, tableScene, osoby));
+}
+
 	public ObservableList<Ziadost> getRequests(ArrayList<Ziadost> ziadosti) {
 		ObservableList<Ziadost> requests = FXCollections.observableArrayList();
 		for(Ziadost ziadost: ziadosti) {
@@ -163,6 +407,32 @@ public void showOwnRequests(Scene scene1, SpracovatelPreukazu spracovatel, Array
 	public void assignRequest(Ziadost ziadost, SpracovatelPreukazu spracovatel, Stage processStage, Scene tableScene, ArrayList<Osoba> osoby) {
 		try {
 			if(false == ziadost instanceof ZiadostOPreukaz) throw new NeplatnaVolba();
+			ziadost.kontrolaZiadosti(ziadost, spracovatel, processStage, tableScene, osoby);
+		}
+		catch (NeplatnaVolba warning){
+			Alert incorrect = new Alert(AlertType.WARNING);
+			incorrect.setTitle("Neplatn· voæba");
+			incorrect.setContentText("Vami zvolen· ûiadosù nie je ûiadosù o preukaz, nemÙûe V·m byù pridelen·.");
+			incorrect.showAndWait();
+		}
+	}
+	
+	public void assignRequest(Ziadost ziadost, SpracovatelPrispevku spracovatel, Stage processStage, Scene tableScene, ArrayList<Osoba> osoby) {
+		try {
+			if(false == ziadost instanceof ZiadostOPrispevok) throw new NeplatnaVolba();
+			ziadost.kontrolaZiadosti(ziadost, spracovatel, processStage, tableScene, osoby);
+		}
+		catch (NeplatnaVolba warning){
+			Alert incorrect = new Alert(AlertType.WARNING);
+			incorrect.setTitle("Neplatn· voæba");
+			incorrect.setContentText("Vami zvolen· ûiadosù nie je ûiadosù o prÌspevok, nemÙûe V·m byù pridelen·.");
+			incorrect.showAndWait();
+		}
+	}
+	
+	public void assignRequest(Ziadost ziadost, SpracovatelVykazu spracovatel, Stage processStage, Scene tableScene, ArrayList<Osoba> osoby) {
+		try {
+			if(false == ziadost instanceof RocnyVykazCinnosti) throw new NeplatnaVolba();
 			ziadost.kontrolaZiadosti(ziadost, spracovatel, processStage, tableScene, osoby);
 		}
 		catch (NeplatnaVolba warning){

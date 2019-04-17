@@ -1,5 +1,8 @@
+import java.util.ArrayList;
 
 public class Spracovatel extends VlastnostiOsoby implements Osoba{
+	
+	protected ArrayList <Ziadost> ZiadostiNaSpracovanie = new ArrayList<Ziadost>();
 	
 	public void prijmiZiadost(Ziadost ziadost) {
 		ziadost.setSpracovatel(this);
@@ -39,5 +42,11 @@ public class Spracovatel extends VlastnostiOsoby implements Osoba{
 	}
 	public String getHeslo() {
 		return Heslo;
+	}
+	public ArrayList<Ziadost> getZiadostiNaSpracovanie() {
+		return ZiadostiNaSpracovanie;
+	}
+	public void setZiadostiNaSpracovanie(ArrayList<Ziadost> ziadostiNaSpracovanie) {
+		ZiadostiNaSpracovanie = ziadostiNaSpracovanie;
 	}
 }

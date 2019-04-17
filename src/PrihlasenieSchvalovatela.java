@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.Scanner;
 
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.CheckBox;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -80,6 +81,7 @@ public void showExistingRequests(Scene scene1, Schvalovatel schvalovatel, ArrayL
 		assignButton.setPadding(new Insets(10,10,10,10));
 		
 		TextField input = new TextField();
+		input.setPromptText("⁄daje, ktorÈ potrebujete od ûiadateæa");
 		input.setMaxWidth(150);
 		input.setEditable(false);
 		
@@ -99,14 +101,19 @@ public void showExistingRequests(Scene scene1, Schvalovatel schvalovatel, ArrayL
 			}
 		}
 		choiceBox.setVisible(false);
-
+		
+		CheckBox checkBox = new CheckBox("Doplnenie ˙dajov");
+		HBox assignmentHBox = new HBox(10);
+		assignmentHBox.setAlignment(Pos.CENTER);
+		assignmentHBox.getChildren().addAll(choiceBox, input, writeAndReturn, checkBox);
+		
 		HBox hBox = new HBox(10);
 		hBox.setAlignment(Pos.CENTER);
 		hBox.getChildren().addAll(assignButton, returnButton);
 		
 		VBox vBox = new VBox(10);
 		vBox.setAlignment(Pos.CENTER);
-		vBox.getChildren().addAll(table, choiceBox, input, writeAndReturn, hBox);
+		vBox.getChildren().addAll(table, assignmentHBox, hBox);
 		
 		TableColumn<Ziadost, String> typeColumn = new TableColumn<>("Typ ûiadosti");
 		typeColumn.setMinWidth(50);
@@ -136,8 +143,7 @@ public void showExistingRequests(Scene scene1, Schvalovatel schvalovatel, ArrayL
 			try {
 				Ziadost tempRequest = null;
 				Osoba spracovatel = null;
-				if(input.getText().equals("") || choiceBox.getSelectionModel().isEmpty() ||
-						table.getSelectionModel().isEmpty()) throw new IOException();
+				if(choiceBox.getSelectionModel().isEmpty() || table.getSelectionModel().isEmpty()) throw new IOException();
 				tempRequest = table.getSelectionModel().getSelectedItem();
 				for(Osoba osoba: osoby) {
 					if(osoba.getMenoOsoby().equals(choiceBox.getSelectionModel().getSelectedItem())) {
@@ -160,11 +166,18 @@ public void showExistingRequests(Scene scene1, Schvalovatel schvalovatel, ArrayL
 					((SpracovatelVykazu) tempRequest.getSpracovatel()).getZiadostiNaSpracovanie().remove(tempRequest); //odobratie ziadosti povodnemu spracovatelovi
 					((SpracovatelVykazu) spracovatel).prijmiZiadost((RocnyVykazCinnosti) tempRequest);
 				}
-				tempRequest.setStav("Ziadost bola SCHVALOVATELOM pridelena spracovatelovi na doplnenie udaju: "+input.getText());
+				if(checkBox.isSelected()) {
+					if(input.getText().isEmpty()) throw new IOException();
+					tempRequest.setStav("éiadosù bola SCHVALOVATELOM pridelen· spracovateæovi na doplnenie ˙daju: "+input.getText());
+					tempRequest.setDoplnenie(true);
+				}
+				else {
+					tempRequest.setStav("éiadosù bola SCHVALOVATELOM pridelen· spracovateæovi");
+				}
+				
 				tempRequest.setSchvalovatel(null);
 				if (true == schvalovatel.getZiadostiNaSpracovanie().contains(tempRequest)) schvalovatel.getZiadostiNaSpracovanie().remove(tempRequest);
 				
-
 				writeAndReturn.setVisible(false);
 				input.setEditable(false);
 				choiceBox.setVisible(false);

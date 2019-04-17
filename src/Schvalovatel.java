@@ -1,9 +1,7 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Schvalovatel extends Spracovatel{	
-	private ArrayList <Ziadost> ZiadostiNaSpracovanie = new ArrayList<Ziadost>();
-	private String Heslo;
+public class Schvalovatel extends Spracovatel{
 	
 	public Notifikacia getNotifikaciaOsoby() {
 		return NotifikaciaOsoby;
@@ -12,9 +10,9 @@ public class Schvalovatel extends Spracovatel{
 		NotifikaciaOsoby = notifikaciaOsoby;
 	}
 	
-	public Schvalovatel(String MenoOsoby, String IdentifikacneCislo, int PoradoveCislo) {
+	public Schvalovatel(String MenoOsoby, String Heslo, int PoradoveCislo) {
 		this.setMenoOsoby(MenoOsoby);
-		this.setIdentifikacneCislo(IdentifikacneCislo);
+		this.setHeslo(Heslo);
 		this.setPoradoveCislo(PoradoveCislo);
 		this.setIdentifikacia("SC");
 	}
@@ -101,20 +99,5 @@ public class Schvalovatel extends Spracovatel{
 		HladanaZiadost.setAktivna(false);
 		this.ZiadostiNaSpracovanie.remove(HladanaZiadost);
 		ziadosti.remove(HladanaZiadost);
-	}
-
-	public ArrayList<Ziadost> getZiadostiNaSpracovanie() {
-		return ZiadostiNaSpracovanie;
-	}
-	
-	public void setZiadostiNaSpracovanie(ArrayList<Ziadost> ziadostiNaSpracovanie) {
-		ZiadostiNaSpracovanie = ziadostiNaSpracovanie;
-	}
-	
-	public void setHeslo(String Heslo) {
-		this.Heslo = Heslo;
-	}
-	public String getHeslo() {
-		return Heslo;
 	}
 }

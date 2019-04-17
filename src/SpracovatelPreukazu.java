@@ -12,7 +12,6 @@ import javafx.stage.Stage;
 import java.io.*;
 
 public class SpracovatelPreukazu extends Spracovatel {
-		private ArrayList <Ziadost> ZiadostiNaSpracovanie = new ArrayList<Ziadost>();
 		
 		public void setHeslo(String Heslo) {
 			this.Heslo = Heslo;
@@ -171,12 +170,5 @@ public class SpracovatelPreukazu extends Spracovatel {
 					approvers.add(osoba);
 			}
 			return approvers;
-		}
-		
-		public ArrayList<Ziadost> getZiadostiNaSpracovanie() {
-			return ZiadostiNaSpracovanie;
-		}
-		public void setZiadostiNaSpracovanie(ArrayList<Ziadost> ziadostiNaSpracovanie) {
-			ZiadostiNaSpracovanie = ziadostiNaSpracovanie;
 		}
 }

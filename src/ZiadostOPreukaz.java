@@ -24,7 +24,7 @@ public class ZiadostOPreukaz implements Ziadost {
 			setIdentifikacneCisloZiadatela(securityNumber);
 			setDovod(reason);
 			setDruh("Preukaz");
-			setStav("Ziadost bola podana.");
+			setStav("éiadosù bola podan·.");
 			setAktivna(true);
 		}
 		
